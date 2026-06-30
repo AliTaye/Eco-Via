@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>منصة بيئيين</title>
+    
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#005232",
+                        "secondary": "#526350",
+                        "primary-fixed": "#8af8bb",
+                        "on-primary-container": "#81efb2",
+                        "surface": "#f9faf5",
+                        "on-surface": "#1a1c19",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-low": "#f3f4ef",
+                        "surface-container-high": "#e7e9e4",
+                        "on-surface-variant": "#3f4942",
+                        "outline": "#6f7a71",
+                        "outline-variant": "#bec9bf"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    }
+                },
+            },
+        }
+    </script>
+    
+    <style>
+        body {
+            font-family: 'IBM Plex Sans Arabic', 'Manrope', sans-serif; 
+            background-color: #f9faf5; 
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle; 
+        }
+        .editorial-gradient {
+            background: linear-gradient(135deg, #005232 0%, #006d44 100%); 
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .hidden-view {
+            display: none !important;
+        }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 rgba(0,82,50,0.3); }
+            50% { box-shadow: 0 0 30px rgba(0,82,50,0.5); }
+            100% { box-shadow: 0 0 0 rgba(0,82,50,0.3); }
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1) }
+            33% { transform: translate(30px, -50px) scale(1.1) }
+            66% { transform: translate(-20px, 20px) scale(0.9) }
+            100% { transform: translate(0px, 0px) scale(1) }
+        }
+
+        .animate-blob { animation: blob 7s infinite; }
+        .hero-animation { animation: float 4s ease-in-out infinite; }
+        .glow-animation { animation: pulseGlow 2.5s infinite; border-radius: 50%; }
+        .fade-up { animation: fadeUp 1s ease forwards; }
+
+        /* Custom Toast Notification */
+        #custom-toast {
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            transform: translateY(-20px);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #custom-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+<body class="text-on-surface antialiased overflow-x-hidden min-h-screen relative">
+
+    <div id="custom-toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[9999] bg-surface border-l-4 border-primary shadow-2xl rounded-xl p-4 flex items-center gap-3 w-11/12 max-w-md hidden-view">
+        <span class="material-symbols-outlined text-primary text-2xl" id="toast-icon">info</span>
+        <p id="toast-msg" class="text-on-surface font-semibold text-sm flex-1"></p>
+        <button onclick="hideToast()" class="text-secondary hover:text-primary transition-colors">
+            <span class="material-symbols-outlined text-lg">close</span>
+        </button>
+    </div>
+
+    <main id="view-home" class="flex flex-col min-h-screen relative overflow-x-hidden p-6 transition-opacity duration-300">
+        
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" alt="[خلفية طبيعية بيئية]" class="w-full h-full object-cover" />
+            <div class="absolute inset-0 bg-[#f9faf5]/85 backdrop-blur-sm"></div>
+            <div class="absolute top-0 right-0 -mt-20 -mr-20 w-96 h-96 bg-primary-fixed rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob"></div>
+            <div class="absolute bottom-0 left-0 -mb-20 -ml-20 w-96 h-96 bg-primary/30 rounded-full mix-blend-multiply filter blur-[128px] opacity-50 animate-blob animation-delay-2000"></div>
+        </div>
+
+        <header class="absolute top-6 right-6 md:top-8 md:right-12 z-20 flex items-center gap-2 fade-up">
+            <span class="material-symbols-outlined text-primary text-4xl shadow-sm rounded-full bg-white/50 p-1 backdrop-blur-md">eco</span>
+            <span class="text-primary text-2xl font-bold tracking-tight">بيئيين</span>
+        </header>
+
+        <div class="flex-1 flex flex-col justify-center items-center relative z-10 w-full max-w-4xl mx-auto py-12 mt-12 md:mt-0">
+            <div class="text-center mb-16 mt-8 md:mt-0 flex flex-col items-center">
+                <a href="https://oasis-bay-151.faces.site/w8chr2rnnq3e"
+                   target="_blank"
+                   class="group relative inline-block transition-transform duration-300 hover:scale-105 mb-4 hero-animation glow-animation"
+                   title="المساعد البيئي">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="[صورة خبير بيئي]" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover shadow-2xl border-4 border-white group-hover:border-primary-fixed transition-colors">
+                    <div class="absolute -bottom-4 left-1/2 transform -translate-x-1/2 bg-primary text-white text-sm font-bold py-1.5 px-6 rounded-full shadow-lg whitespace-nowrap flex items-center gap-1 group-hover:bg-[#006d44] transition-colors">
+                        اضغط هنا
+                        <span class="material-symbols-outlined text-sm">ads_click</span>
+                    </div>
+                </a>
+                <h2 class="text-3xl md:text-5xl font-bold text-primary mt-6 mb-4 drop-shadow-sm fade-up">منصة بيئيين</h2>
+                <p class="text-secondary text-lg max-w-lg font-medium bg-white/40 px-6 py-2 rounded-full backdrop-blur-md border border-white/50 shadow-sm fade-up" style="animation-delay: 0.1s;">الرجاء تحديد نوع الحساب للمتابعة وإتمام عملية الدخول أو التسجيل.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 md:gap-8 w-full max-w-3xl">
+                <a href="#" onclick="navigate('view-step1'); return false;" class="group relative bg-white/70 backdrop-blur-xl p-4 md:p-8 rounded-3xl border-2 border-white/60 hover:border-primary shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center overflow-hidden hover:-translate-y-2 fade-up" style="animation-delay: 0.2s;">
+                    <div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300"></div>
+                    <div class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
+                        <span class="material-symbols-outlined text-3xl md:text-4xl">person_search</span>
+                    </div>
+                    <h3 class="text-base md:text-2xl font-bold text-on-surface mb-2 md:mb-3 group-hover:text-primary transition-colors">أخصائي بيئي</h3>
+                    <p class="text-secondary text-xs md:text-base mb-4 md:mb-8 leading-relaxed font-medium">للأفراد والمتخصصين في المجال البيئي لتوثيق أعمالهم والوصول إلى الأرشيف.</p>
+                    <div class="mt-auto inline-flex items-center gap-1 md:gap-2 text-primary font-bold group-hover:gap-2 md:group-hover:gap-3 transition-all text-xs md:text-base bg-white/50 px-4 py-2 rounded-full">
+                        <span>دخول كأخصائي</span>
+                        <span class="material-symbols-outlined rotate-180 text-base md:text-lg">arrow_right_alt</span>
+                    </div>
+                </a>
+
+                <a href="#" onclick="navigate('view-org-step1'); return false;" class="group relative bg-white/70 backdrop-blur-xl p-4 md:p-8 rounded-3xl border-2 border-white/60 hover:border-primary shadow-lg hover:shadow-2xl transition-all duration-300 flex flex-col items-center text-center overflow-hidden hover:-translate-y-2 fade-up" style="animation-delay: 0.3s;">
+                    <div class="absolute inset-0 bg-primary opacity-0 group-hover:opacity-[0.03] transition-opacity duration-300"></div>
+                    <div class="w-14 h-14 md:w-20 md:h-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm">
+                        <span class="material-symbols-outlined text-3xl md:text-4xl">domain</span>
+                    </div>
+                    <h3 class="text-base md:text-2xl font-bold text-on-surface mb-2 md:mb-3 group-hover:text-primary transition-colors">جهة / مؤسسة</h3>
+                    <p class="text-secondary text-xs md:text-base mb-4 md:mb-8 leading-relaxed font-medium">للشركات والمؤسسات لإدارة المشاريع واستعراض الكفاءات البيئية.</p>
+                    <div class="mt-auto inline-flex items-center gap-1 md:gap-2 text-primary font-bold group-hover:gap-2 md:group-hover:gap-3 transition-all text-xs md:text-base bg-white/50 px-4 py-2 rounded-full">
+                        <span>دخول كجهة</span>
+                        <span class="material-symbols-outlined rotate-180 text-base md:text-lg">arrow_right_alt</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <footer class="w-full z-10 text-center text-secondary text-sm mt-auto pt-4 font-medium backdrop-blur-sm bg-white/30 py-2 rounded-t-2xl fade-up flex flex-col items-center gap-2" style="animation-delay: 0.4s;">
+            <p>© بيئيين ٢٠٢٦. جميع الحقوق محفوظة.</p>
+            <a href="#" onclick="navigate('view-admin'); return false;" class="text-xs text-primary/60 hover:text-primary transition-colors flex items-center gap-1 mb-2">
+                <span class="material-symbols-outlined text-[14px]">admin_panel_settings</span>
+                بوابة الإدارة
+            </a>
+        </footer>
+    </main>
+
+    <main id="view-step1" class="hidden-view flex-col md:flex-row min-h-screen w-full transition-opacity duration-300">
+        <section class="hidden md:flex md:w-5/12 editorial-gradient p-12 flex-col justify-between relative overflow-hidden">
+            <div class="relative z-10">
+                <a href="#" onclick="navigate('view-home'); return false;" class="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity w-fit">
+                    <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                    <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين</h1>
+                </a>
+                <div class="space-y-6">
+                    <h2 class="text-white text-4xl lg:text-5xl font-bold leading-tight">الأرشيف الحي للخبراء البيئيين</h2>
+                    <p class="text-on-primary-container text-lg leading-relaxed max-w-md"> انضم إلى نخبة الأخصائيين البيئيين وساهم في بناء مستقبل مستدام. </p>
+                </div>
+            </div>
+            <div class="absolute inset-0 opacity-20 pointer-events-none">
+                <img class="w-full h-full object-cover grayscale mix-blend-overlay" alt="[الطبيعة والأشجار]" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" />
+            </div>
+        </section>
+
+        <section class="flex-1 flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 bg-surface relative overflow-y-auto">
+            <div class="w-full max-w-xl">
+                
+                <header class="mb-12 text-right">
+                    <h3 class="text-primary text-3xl font-bold mb-2">البيانات الشخصية</h3>
+                    <p class="text-secondary">يرجى تعبئة بياناتك الأساسية للبدء</p>
+                </header>
+
+                <nav class="mb-12">
+                    <ul class="flex items-center justify-between relative">
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full editorial-gradient text-white flex items-center justify-center font-bold shadow-lg">١</div>
+                            <span class="text-xs font-semibold text-primary">البيانات الشخصية</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-outline-variant mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold">٢</div>
+                            <span class="text-xs font-semibold text-secondary">الترخيص المهني</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-outline-variant mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold">٣</div>
+                            <span class="text-xs font-semibold text-secondary">التحقق</span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <form id="form-step1" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="full_name">الاسم الثلاثي</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="full_name" placeholder="الاسم الأول، اسم الأب، العائلة" type="text" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="national_id">رقم الهوية</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="national_id" placeholder="١٠ أرقام" type="text" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="email">البريد الإلكتروني</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50 text-right" dir="ltr" id="email" placeholder="example@domain.com" type="email" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="phone">رقم الجوال</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50 text-right" dir="ltr" id="phone" placeholder="05xxxxxxxx" type="tel" required />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="bio">نبذة مهنية (اختياري)</label>
+                            <button type="button" id="enhance-bio-btn" class="text-xs text-primary font-bold bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1 border border-primary/20 shadow-sm">
+                                ✨ صياغة احترافية بذكاء
+                            </button>
+                        </div>
+                        <textarea id="bio" rows="3" class="w-full px-4 py-3 bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" placeholder="اكتب نبذة بسيطة عن خبراتك ومجالك، وسيقوم المساعد الذكي بصياغتها باحترافية..."></textarea>
+                    </div>
+
+                    <div class="bg-surface-container-low p-6 rounded-xl border-r-4 border-primary mt-6">
+                        <div class="flex gap-4 items-start">
+                            <span class="material-symbols-outlined text-primary">info</span>
+                            <div>
+                                <h4 class="font-bold text-primary mb-1">خصوصية البيانات</h4>
+                                <p class="text-sm text-secondary leading-relaxed">يتم معالجة جميع بياناتك وفقاً لمعايير الأمن السيبراني الوطنية. لن يتم مشاركة بيانات الهوية مع أي طرف ثالث.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-6 border-t border-outline-variant/30">
+                        <button type="button" onclick="navigate('view-home')" class="px-6 py-2.5 border-2 border-outline-variant rounded-xl text-secondary font-bold hover:bg-surface-container-high transition-colors focus:ring-2 focus:ring-primary focus:outline-none">
+                            إلغاء
+                        </button>
+                        <button type="submit" class="px-8 py-2.5 bg-primary hover:bg-[#006d44] text-white font-bold rounded-xl shadow-md transition-all hover:-translate-y-0.5 focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:outline-none flex items-center gap-2">
+                            متابعة
+                            <span class="material-symbols-outlined rotate-180 text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+
+                <footer class="mt-16 pt-8 flex justify-between items-center text-xs text-secondary/60">
+                    <p>© بيئيين ٢٠٢٦</p>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-step2" class="hidden-view flex-col md:flex-row min-h-screen w-full transition-opacity duration-300">
+        
+        <section class="hidden md:flex md:w-5/12 editorial-gradient p-12 flex-col justify-between relative overflow-hidden">
+            <div class="relative z-10">
+                <a href="#" onclick="navigate('view-home'); return false;" class="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity w-fit">
+                    <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                    <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين</h1>
+                </a>
+                <div class="space-y-6">
+                    <h2 class="text-white text-4xl lg:text-5xl font-bold leading-tight">توثيق الكفاءات والقدرات</h2>
+                    <p class="text-on-primary-container text-lg leading-relaxed max-w-md">أضف تفاصيل ترخيصك المهني لتعزيز موثوقية ملفك الشخصي في المنصة.</p>
+                </div>
+            </div>
+            <div class="absolute inset-0 opacity-20 pointer-events-none">
+                <img class="w-full h-full object-cover grayscale mix-blend-overlay" alt="[أوراق الشجر والطبيعة]" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" />
+            </div>
+        </section>
+
+        <section class="flex-1 flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 bg-surface relative overflow-y-auto">
+            <div class="w-full max-w-xl">
+                
+                <header class="mb-12 text-right">
+                    <h3 class="text-primary text-3xl font-bold mb-2">الترخيص المهني</h3>
+                    <p class="text-secondary">يرجى إدخال تفاصيل الترخيص وإرفاق المستندات المطلوبة</p>
+                </header>
+
+                <nav class="mb-12">
+                    <ul class="flex items-center justify-between relative">
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md cursor-pointer" onclick="navigate('view-step1')" title="العودة للبيانات الشخصية">
+                                <span class="material-symbols-outlined text-xl">check</span>
+                            </div>
+                            <span class="text-xs font-semibold text-primary">البيانات الشخصية</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-primary mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full editorial-gradient text-white flex items-center justify-center font-bold shadow-lg">٢</div>
+                            <span class="text-xs font-semibold text-primary">الترخيص المهني</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-outline-variant mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center font-bold">٣</div>
+                            <span class="text-xs font-semibold text-secondary">التحقق</span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <form id="form-step2" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="license">رقم الترخيص</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="license" placeholder="أدخل رقم الترخيص الخاص بك" type="text" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="issuer">جهة الإصدار</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="issuer" placeholder="مثال: المركز الوطني للرقابة" type="text" required />
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-semibold text-secondary mr-1">رفع ملف الترخيص</label>
+                        <label for="file_upload" class="w-full px-4 py-10 bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer group">
+                            <div class="w-14 h-14 bg-surface-container-low text-primary rounded-full flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined text-3xl">cloud_upload</span>
+                            </div>
+                            <div class="text-center" id="upload_label">
+                                <span class="text-sm font-bold text-primary block mb-1">اضغط هنا لاختيار الملف</span>
+                                <span class="text-xs text-secondary">صيغ الملفات المدعومة: PDF, JPG, PNG (الحد الأقصى 5MB)</span>
+                            </div>
+                            <input type="file" id="file_upload" class="hidden" accept=".pdf,.jpg,.jpeg,.png" required />
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-6 border-t border-outline-variant/30">
+                        <button type="button" onclick="navigate('view-step1')" class="px-6 py-2.5 border-2 border-outline-variant rounded-xl text-secondary font-bold hover:bg-surface-container-high transition-colors focus:ring-2 focus:ring-primary focus:outline-none">
+                            رجوع
+                        </button>
+                        <button type="submit" id="submit-step2-btn" class="px-8 py-2.5 bg-primary hover:bg-[#006d44] text-white font-bold rounded-xl shadow-md transition-all hover:-translate-y-0.5 focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:outline-none flex items-center gap-2">
+                            متابعة للتحقق
+                            <span class="material-symbols-outlined rotate-180 text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+
+                <footer class="mt-16 pt-8 flex justify-between items-center text-xs text-secondary/60">
+                    <p>© بيئيين ٢٠٢٦</p>
+                </footer>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-otp" class="hidden-view flex-col md:flex-row min-h-screen w-full transition-opacity duration-300">
+        
+        <section class="hidden md:flex md:w-5/12 editorial-gradient p-12 flex-col justify-between relative overflow-hidden">
+            <div class="relative z-10">
+                <a href="#" onclick="navigate('view-home'); return false;" class="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity w-fit">
+                    <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                    <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين</h1>
+                </a>
+                <div class="space-y-6">
+                    <h2 class="text-white text-4xl lg:text-5xl font-bold leading-tight">الخطوة الأخيرة</h2>
+                    <p class="text-on-primary-container text-lg leading-relaxed max-w-md">أمان حسابك هو أولويتنا. يرجى تأكيد رقم الجوال لإتمام إنشاء حسابك.</p>
+                </div>
+            </div>
+            <div class="absolute inset-0 opacity-20 pointer-events-none">
+                <img class="w-full h-full object-cover grayscale mix-blend-overlay" alt="[أوراق الشجر والطبيعة]" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" />
+            </div>
+        </section>
+
+        <section class="flex-1 flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 bg-surface relative overflow-y-auto">
+            <div class="w-full max-w-xl">
+                
+                <header class="mb-12 text-right">
+                    <h3 class="text-primary text-3xl font-bold mb-2">تأكيد رقم الجوال</h3>
+                    <p class="text-secondary">تم إرسال رمز تحقق (OTP) إلى الرقم المدخل مسبقاً</p>
+                </header>
+
+                <nav class="mb-12">
+                    <ul class="flex items-center justify-between relative">
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md cursor-pointer" onclick="navigate('view-step1')" title="العودة للبيانات الشخصية">
+                                <span class="material-symbols-outlined text-xl">check</span>
+                            </div>
+                            <span class="text-xs font-semibold text-primary">البيانات الشخصية</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-primary mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold shadow-md cursor-pointer" onclick="navigate('view-step2')" title="العودة للترخيص المهني">
+                                <span class="material-symbols-outlined text-xl">check</span>
+                            </div>
+                            <span class="text-xs font-semibold text-primary">الترخيص المهني</span>
+                        </li>
+                        <li class="flex-1 h-[2px] bg-primary mx-2 -mt-6"></li>
+                        <li class="relative z-10 flex flex-col items-center gap-2">
+                            <div class="w-10 h-10 rounded-full editorial-gradient text-white flex items-center justify-center font-bold shadow-lg">٣</div>
+                            <span class="text-xs font-semibold text-primary">التحقق</span>
+                        </li>
+                    </ul>
+                </nav>
+
+                <form id="form-otp" class="space-y-8 text-center flex flex-col items-center">
+                    <div class="flex flex-col items-center gap-4 w-full">
+                        <label class="text-sm font-semibold text-secondary block">أدخل رمز التحقق المرسل إلى رقم جوالك:</label>
+                        
+                        <div class="flex gap-2 md:gap-4 justify-center" dir="ltr">
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                            <input type="number" class="otp-input w-12 h-14 md:w-16 md:h-16 text-center text-xl md:text-2xl font-bold bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-2 focus:ring-primary focus:outline-none transition-colors" maxlength="1" required />
+                        </div>
+                    </div>
+
+                    <div class="text-sm text-secondary">
+                        لم يصلك الرمز؟ 
+                        <button type="button" onclick="resendCode()" class="text-primary font-bold hover:underline transition-all">إعادة إرسال الرمز</button> 
+                        <span class="mr-1 text-xs opacity-70">(00:59)</span>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-6 border-t border-outline-variant/30 w-full">
+                        <button type="button" onclick="navigate('view-step2')" class="px-6 py-2.5 border-2 border-outline-variant rounded-xl text-secondary font-bold hover:bg-surface-container-high transition-colors focus:ring-2 focus:ring-primary focus:outline-none">
+                            رجوع
+                        </button>
+                        <button type="submit" class="px-8 py-2.5 bg-primary hover:bg-[#006d44] text-white font-bold rounded-xl shadow-md transition-all hover:-translate-y-0.5 focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:outline-none flex items-center gap-2">
+                            تأكيد التسجيل
+                            <span class="material-symbols-outlined text-sm">verified_user</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-org-step1" class="hidden-view flex-col md:flex-row min-h-screen w-full transition-opacity duration-300">
+        <section class="hidden md:flex md:w-5/12 editorial-gradient p-12 flex-col justify-between relative overflow-hidden">
+            <div class="relative z-10">
+                <a href="#" onclick="navigate('view-home'); return false;" class="flex items-center gap-3 mb-12 hover:opacity-80 transition-opacity w-fit">
+                    <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                    <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين</h1>
+                </a>
+                <div class="space-y-6">
+                    <h2 class="text-white text-4xl lg:text-5xl font-bold leading-tight">بوابة الجهات والمؤسسات</h2>
+                    <p class="text-on-primary-container text-lg leading-relaxed max-w-md">أدر مشاريعك واستقطب أفضل الكفاءات والخبراء المعتمدين في المنصة بسهولة.</p>
+                </div>
+            </div>
+            <div class="absolute inset-0 opacity-20 pointer-events-none">
+                <img class="w-full h-full object-cover grayscale mix-blend-overlay" alt="[مباني ومؤسسات]" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80" />
+            </div>
+        </section>
+
+        <section class="flex-1 flex flex-col items-center justify-center p-6 md:p-12 lg:p-24 bg-surface relative overflow-y-auto">
+            <div class="w-full max-w-xl">
+                
+                <header class="mb-12 text-right">
+                    <h3 class="text-primary text-3xl font-bold mb-2">تسجيل جهة جديدة</h3>
+                    <p class="text-secondary">يرجى إدخال بيانات المؤسسة للتحقق من الأهلية</p>
+                </header>
+
+                <form id="form-org-step1" class="space-y-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="org_name">اسم المؤسسة</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="org_name" placeholder="أدخل اسم الجهة أو المؤسسة" type="text" required />
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="cr_number">السجل التجاري</label>
+                            <input class="w-full px-4 py-3 bg-transparent border-0 border-b-2 border-outline-variant focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" id="cr_number" placeholder="أدخل رقم السجل التجاري" type="text" required />
+                        </div>
+                    </div>
+
+                    <!-- ميزة الذكاء الاصطناعي للمؤسسات العامة -->
+                    <div class="flex flex-col gap-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-sm font-semibold text-secondary mr-1" for="org_desc">وصف نشاط المنشأة</label>
+                            <button type="button" id="enhance-org-btn" class="text-xs text-primary font-bold bg-primary/10 hover:bg-primary/20 px-3 py-1.5 rounded-full transition-colors flex items-center gap-1 border border-primary/20 shadow-sm">
+                                ✨ إنشاء وصف ترويجي جذاب
+                            </button>
+                        </div>
+                        <textarea id="org_desc" rows="3" class="w-full px-4 py-3 bg-transparent border-2 border-outline-variant rounded-xl focus:border-primary focus:ring-0 transition-colors placeholder:text-outline/50" placeholder="اكتب كلمات مفتاحية عن نشاط المنشأة ومجال عملها، وسنقوم بكتابة وصف احترافي..."></textarea>
+                    </div>
+
+                    <div class="flex flex-col gap-2 mt-2">
+                        <button type="button" id="suggest-initiatives-btn" class="w-fit text-xs md:text-sm text-primary font-bold bg-surface-container-low hover:bg-surface-container-high px-4 py-2.5 rounded-xl transition-colors flex items-center gap-2 border border-outline-variant/50 shadow-sm group">
+                            ✨ اقترح مبادرات لمؤسستي
+                            <span class="material-symbols-outlined text-[16px] group-hover:rotate-12 transition-transform">lightbulb</span>
+                        </button>
+                        <div id="initiatives-container" class="hidden bg-primary-fixed/20 border border-primary/20 rounded-xl p-5 mt-2 transition-all">
+                            <h4 class="font-bold text-primary text-sm mb-3 flex items-center gap-2"><span class="material-symbols-outlined text-[18px]">auto_awesome</span> أفكار ومبادرات مقترحة بذكاء:</h4>
+                            <div id="initiatives-content" class="text-sm text-on-surface leading-relaxed whitespace-pre-line font-medium"></div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="text-sm font-semibold text-secondary mr-1">إرفاق السجل التجاري أو التفويض</label>
+                        <label for="org_file_upload" class="w-full px-4 py-10 bg-surface-container-lowest border-2 border-dashed border-outline-variant rounded-2xl flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-surface-container-low transition-all cursor-pointer group">
+                            <div class="w-14 h-14 bg-surface-container-low text-primary rounded-full flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                                <span class="material-symbols-outlined text-3xl">domain_verification</span>
+                            </div>
+                            <div class="text-center" id="org_upload_label">
+                                <span class="text-sm font-bold text-primary block mb-1">اضغط هنا لاختيار الملف</span>
+                                <span class="text-xs text-secondary">صيغ الملفات المدعومة: PDF, JPG, PNG (الحد الأقصى 5MB)</span>
+                            </div>
+                            <input type="file" id="org_file_upload" class="hidden" accept=".pdf,.jpg,.jpeg,.png" required />
+                        </label>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-6 border-t border-outline-variant/30">
+                        <button type="button" onclick="navigate('view-home')" class="px-6 py-2.5 border-2 border-outline-variant rounded-xl text-secondary font-bold hover:bg-surface-container-high transition-colors focus:ring-2 focus:ring-primary focus:outline-none">
+                            إلغاء
+                        </button>
+                        <button type="submit" class="px-8 py-2.5 bg-primary hover:bg-[#006d44] text-white font-bold rounded-xl shadow-md transition-all hover:-translate-y-0.5 focus:ring-2 focus:ring-offset-2 focus:ring-primary focus:outline-none flex items-center gap-2">
+                            تأكيد التسجيل
+                            <span class="material-symbols-outlined rotate-180 text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-user-dashboard" class="hidden-view min-h-screen w-full flex-col md:flex-row bg-surface-container-lowest transition-opacity duration-300">
+        
+        <aside class="w-full md:w-64 editorial-gradient text-white flex flex-col p-6 shadow-xl z-20 shrink-0">
+            <div class="flex items-center gap-3 mb-12">
+                <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين <span class="text-xs text-primary-fixed block">حسابي</span></h1>
+            </div>
+            <nav class="flex-1 flex flex-col gap-2">
+                <button onclick="switchUserTab('home')" id="utab-home" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl bg-white/20 font-bold transition-all">
+                    <span class="material-symbols-outlined">home</span> الرئيسية
+                </button>
+                <button onclick="switchUserTab('cv')" id="utab-cv" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all">
+                    <span class="material-symbols-outlined">contact_page</span> السيرة الذاتية
+                </button>
+                <button onclick="switchUserTab('orgs')" id="utab-orgs" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all">
+                    <span class="material-symbols-outlined">corporate_fare</span> المنشآت
+                </button>
+                <button onclick="switchUserTab('profile')" id="utab-profile" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all">
+                    <span class="material-symbols-outlined">person</span> الملف الشخصي
+                </button>
+            </nav>
+            <button onclick="navigate('view-home')" class="mt-auto flex items-center justify-center gap-2 w-full px-4 py-3 border border-white/30 rounded-xl text-white hover:bg-white/10 transition-colors font-bold">
+                <span class="material-symbols-outlined rotate-180">logout</span> خروج
+            </button>
+        </aside>
+
+        <section class="flex-1 p-6 md:p-10 overflow-y-auto bg-surface-container-low">
+            
+            <div id="ucontent-home" class="block">
+                <h2 class="text-3xl font-bold text-primary mb-8">مرحباً بك! 👋</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50">
+                        <h3 class="font-bold text-primary mb-2 flex items-center gap-2"><span class="material-symbols-outlined">description</span> نبذة عن السيرة الذاتية</h3>
+                        <p class="text-sm text-secondary leading-relaxed">ملفك الشخصي مكتمل بنسبة 80%. تأكد من تحديث خبراتك وشهاداتك لزيادة فرص قبولك في المشاريع المتاحة.</p>
+                        <button onclick="switchUserTab('cv')" class="mt-4 text-xs font-bold bg-primary/10 text-primary px-4 py-2 rounded-lg hover:bg-primary/20 transition-colors">تحديث السيرة الذاتية</button>
+                    </div>
+                    
+                    <!-- التعديل هنا: جعل مربع طلبات التقديم فارغاً واحترافياً بدلاً من البيانات الوهمية -->
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col">
+                        <h3 class="font-bold text-primary mb-4 flex items-center gap-2"><span class="material-symbols-outlined">work_history</span> سجل التقديمات</h3>
+                        <div class="flex-1 flex flex-col items-center justify-center text-center py-4">
+                            <span class="material-symbols-outlined text-4xl text-outline-variant mb-2 opacity-50">hourglass_empty</span>
+                            <p class="text-sm text-secondary font-bold">لا توجد طلبات تقديم حالياً</p>
+                            <p class="text-xs text-outline mt-1 leading-relaxed">عندما تقوم بتقديم سيرتك الذاتية لأي منشأة، ستتمكن من متابعة حالة طلبك هنا.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ucontent-cv" class="hidden">
+                <h2 class="text-3xl font-bold text-primary mb-6">السيرة الذاتية</h2>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 space-y-6">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-20 h-20 bg-surface-container-high rounded-full flex items-center justify-center text-secondary border-2 border-dashed border-outline-variant overflow-hidden cursor-pointer hover:border-primary transition-colors">
+                            <span class="material-symbols-outlined text-3xl">add_a_photo</span>
+                        </div>
+                        <div>
+                            <p class="font-bold text-primary">الصورة الشخصية</p>
+                            <p class="text-xs text-secondary">اضغط لإرفاق صورة شخصية رسمية</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div><label class="text-xs font-bold text-secondary">الاسم الرباعي</label><input type="text" id="cv_name" class="w-full px-4 py-3 bg-surface rounded-xl border border-outline-variant mt-1 font-bold text-primary" readonly></div>
+                        <div><label class="text-xs font-bold text-secondary">رقم الهوية</label><input type="text" id="cv_id" class="w-full px-4 py-3 bg-surface rounded-xl border border-outline-variant mt-1 font-mono text-sm" readonly></div>
+                        <div><label class="text-xs font-bold text-secondary">البريد الإلكتروني</label><input type="email" id="cv_email" class="w-full px-4 py-3 bg-surface rounded-xl border border-outline-variant mt-1" dir="ltr" readonly></div>
+                        <div><label class="text-xs font-bold text-secondary">رقم الجوال</label><input type="tel" id="cv_phone" class="w-full px-4 py-3 bg-surface rounded-xl border border-outline-variant mt-1" dir="ltr" readonly></div>
+                        
+                        <div>
+                            <label class="text-xs font-bold text-secondary">الجنسية</label>
+                            <select id="cv_nationality" class="w-full px-4 py-3 bg-transparent rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 mt-1">
+                                <option value="" disabled selected>اختر الجنسية</option>
+                                <option value="السعودية">المملكة العربية السعودية</option>
+                                <option value="الإمارات">الإمارات العربية المتحدة</option>
+                                <option value="الكويت">الكويت</option>
+                                <option value="البحرين">البحرين</option>
+                                <option value="قطر">قطر</option>
+                                <option value="عمان">عمان</option>
+                                <option value="مصر">مصر</option>
+                                <option value="الأردن">الأردن</option>
+                                <option value="أخرى">أخرى (جميع دول العالم)</option>
+                            </select>
+                        </div>
+
+                        <!-- Date of Birth Custom Input -->
+                        <div class="md:col-span-2 lg:col-span-1">
+                            <label class="text-xs font-bold text-secondary">تاريخ الميلاد</label>
+                            <div class="flex flex-row-reverse md:flex-row gap-2 mt-1">
+                                <select id="cv_dob_type" class="w-1/3 md:w-1/4 px-2 py-3 bg-transparent rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 text-sm font-bold text-primary">
+                                    <option value="gregorian">ميلادي</option>
+                                    <option value="hijri">هجري</option>
+                                </select>
+                                <input type="number" id="cv_dob_day" placeholder="اليوم" min="1" max="31" class="w-1/4 px-2 py-3 bg-transparent text-center rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 text-sm">
+                                <input type="number" id="cv_dob_month" placeholder="الشهر" min="1" max="12" class="w-1/4 px-2 py-3 bg-transparent text-center rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 text-sm">
+                                <input type="number" id="cv_dob_year" placeholder="السنة (مثال: 1995)" min="1300" max="2026" class="flex-1 px-2 py-3 bg-transparent text-center rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 text-sm">
+                            </div>
+                        </div>
+
+                        <div><label class="text-xs font-bold text-secondary">المستوى التعليمي</label><input type="text" class="w-full px-4 py-3 bg-transparent rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 mt-1" placeholder="مثال: بكالوريوس هندسة"></div>
+                        <div><label class="text-xs font-bold text-secondary">الترخيص المهني (إن وجد)</label><input type="text" id="cv_license" class="w-full px-4 py-3 bg-surface rounded-xl border border-outline-variant mt-1" readonly></div>
+                    </div>
+                    
+                    <div><label class="text-xs font-bold text-secondary">الخبرات</label><textarea rows="3" class="w-full px-4 py-3 bg-transparent rounded-xl border-2 border-outline-variant focus:border-primary focus:ring-0 mt-1" placeholder="اكتب خبراتك السابقة ومجالات تخصصك..."></textarea></div>
+                    
+                    <!-- Multiple Certificates Upload Section -->
+                    <div class="p-4 border-2 border-dashed border-outline-variant rounded-2xl bg-surface-container-lowest">
+                        <label class="text-xs font-bold text-secondary mb-3 block">الشهادات والدورات</label>
+                        
+                        <label for="certs_upload" class="flex items-center justify-center gap-2 w-full px-4 py-3 bg-surface-container-low border border-outline-variant rounded-xl cursor-pointer hover:border-primary hover:bg-primary/5 transition-colors text-sm text-primary font-bold">
+                            <span class="material-symbols-outlined text-lg">upload_file</span>
+                            إرفاق ملفات الشهادات (يمكنك اختيار أكثر من ملف)
+                            <input type="file" id="certs_upload" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png">
+                        </label>
+                        <div id="certs_upload_label" class="mt-3 flex flex-wrap gap-2 text-xs text-secondary empty:hidden"></div>
+                    </div>
+                    
+                    <button class="bg-primary text-white font-bold px-8 py-3 rounded-xl shadow-md hover:bg-[#006d44] transition-colors w-full md:w-auto" onclick="showToast('تم حفظ التحديثات بنجاح!')">حفظ التحديثات</button>
+                </div>
+            </div>
+
+            <div id="ucontent-orgs" class="hidden">
+                <h2 class="text-3xl font-bold text-primary mb-2">المنشآت والجهات</h2>
+                <p class="text-secondary text-sm mb-6">تصفح المنشآت والجهات المسجلة في المنصة وقدم سيرتك الذاتية لها.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">corporate_fare</span></div>
+                            <div><h4 class="font-bold text-primary">المركز الوطني للرقابة البيئية</h4><span class="text-xs text-secondary">جهة حكومية</span></div>
+                        </div>
+                        <p class="text-sm text-secondary leading-relaxed mb-6 flex-1">مركز حكومي يهدف إلى الرقابة على الالتزام البيئي للمنشآت والمشاريع لضمان استدامة البيئة.</p>
+                        <button class="w-full py-2 bg-primary-fixed text-primary font-bold rounded-lg hover:bg-[#7ce2a8] transition-colors" onclick="showToast('تم تقديم سيرتك الذاتية لهذه الجهة.')">تقديم السيرة الذاتية</button>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex flex-col">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">domain</span></div>
+                            <div><h4 class="font-bold text-primary">شركة نيوم</h4><span class="text-xs text-secondary">شركة مساهمة</span></div>
+                        </div>
+                        <p class="text-sm text-secondary leading-relaxed mb-6 flex-1">مشروع وطني طموح يبحث عن أفضل الكفاءات في مجالات التخطيط والاستدامة والمشاريع المبتكرة.</p>
+                        <button class="w-full py-2 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors" onclick="showToast('تم تقديم سيرتك الذاتية لهذه الجهة.')">تقديم السيرة الذاتية</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="ucontent-profile" class="hidden">
+                <h2 class="text-3xl font-bold text-primary mb-6">إعدادات الحساب</h2>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 text-center">
+                    <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">settings</span>
+                    <p class="text-secondary">إعدادات الأمان وتغيير كلمة المرور ستتوفر قريباً.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-admin" class="hidden-view min-h-screen w-full flex-col md:flex-row bg-surface-container-lowest transition-opacity duration-300">
+        <aside class="w-full md:w-64 editorial-gradient text-white flex flex-col p-6 shadow-xl z-20 shrink-0 relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10 pointer-events-none">
+                <img class="w-full h-full object-cover mix-blend-overlay" src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" />
+            </div>
+            <div class="relative z-10 flex items-center gap-3 mb-12">
+                <span class="material-symbols-outlined text-primary-fixed text-4xl">eco</span>
+                <h1 class="text-white text-2xl font-bold tracking-tight">بيئيين <span class="text-xs text-primary-fixed block">لوحة الإدارة</span></h1>
+            </div>
+            <nav class="relative z-10 flex-1 flex flex-col gap-2">
+                <button onclick="switchAdminTab('specialists')" id="tab-btn-specialists" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl bg-white/20 font-bold transition-all hover:bg-white/30">
+                    <span class="material-symbols-outlined">person_search</span> الأخصائيين
+                </button>
+                <button onclick="switchAdminTab('organizations')" id="tab-btn-organizations" class="flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all">
+                    <span class="material-symbols-outlined">domain</span> المؤسسات والجهات
+                </button>
+            </nav>
+            <button onclick="navigate('view-home')" class="relative z-10 mt-auto flex items-center justify-center gap-2 w-full px-4 py-3 border border-white/30 rounded-xl text-white hover:bg-white/10 transition-colors font-bold">
+                <span class="material-symbols-outlined rotate-180">logout</span> خروج
+            </button>
+        </aside>
+
+        <section class="flex-1 p-6 md:p-10 overflow-y-auto bg-surface-container-low">
+            <header class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-primary">نظرة عامة</h2>
+                    <p class="text-secondary text-sm mt-1">مراجعة واعتماد طلبات الانضمام للمنصة</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="generate-ai-report-btn" class="flex items-center gap-2 bg-primary-fixed text-primary px-4 py-2 rounded-lg font-bold shadow-sm border border-primary/20 hover:bg-[#7ce2a8] transition-colors">
+                        ✨ تحليل ذكي للمنصة
+                    </button>
+                    <button onclick="loadAdminData()" class="flex items-center gap-2 bg-white px-4 py-2 rounded-lg text-primary font-bold shadow-sm border border-outline-variant hover:bg-surface transition-colors">
+                        <span class="material-symbols-outlined text-sm">refresh</span> تحديث البيانات
+                    </button>
+                </div>
+            </header>
+
+            <div id="ai-report-container" class="hidden bg-gradient-to-r from-primary/5 to-surface border border-primary/20 rounded-2xl p-6 mb-8 shadow-inner relative overflow-hidden transition-all">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-[40px]"></div>
+                <div class="relative z-10 flex flex-col md:flex-row gap-4 items-start">
+                    <div class="w-12 h-12 rounded-full bg-primary text-white flex items-center justify-center shrink-0 shadow-md">
+                        <span class="material-symbols-outlined">auto_awesome</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-bold text-primary mb-2">رؤية الذكاء الاصطناعي للمنصة</h3>
+                        <div id="ai-report-content" class="text-on-surface-variant leading-relaxed text-sm whitespace-pre-line font-medium">جاري التحليل...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-3xl">group</span>
+                    </div>
+                    <div>
+                        <p class="text-secondary text-sm font-bold">إجمالي الأخصائيين</p>
+                        <p class="text-3xl font-black text-on-surface mt-1" id="stat-specialists">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-[#006d44]/10 text-[#006d44] flex items-center justify-center">
+                        <span class="material-symbols-outlined text-3xl">corporate_fare</span>
+                    </div>
+                    <div>
+                        <p class="text-secondary text-sm font-bold">إجمالي المؤسسات</p>
+                        <p class="text-3xl font-black text-on-surface mt-1" id="stat-orgs">0</p>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-outline-variant/50 flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-full bg-orange-500/10 text-orange-600 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-3xl">pending_actions</span>
+                    </div>
+                    <div>
+                        <p class="text-secondary text-sm font-bold">الطلبات المعلقة</p>
+                        <p class="text-3xl font-black text-on-surface mt-1" id="stat-pending">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-sm border border-outline-variant/50 overflow-hidden">
+                <div id="admin-specialists-section" class="block">
+                    <div class="p-6 border-b border-outline-variant/50 flex justify-between items-center bg-surface/50">
+                        <h3 class="text-lg font-bold text-primary">سجل الأخصائيين</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-sm">
+                            <thead class="bg-surface-container-high text-secondary">
+                                <tr>
+                                    <th class="p-4 font-bold">الاسم الثلاثي</th>
+                                    <th class="p-4 font-bold">رقم الهوية</th>
+                                    <th class="p-4 font-bold">التواصل</th>
+                                    <th class="p-4 font-bold">رقم الترخيص</th>
+                                    <th class="p-4 font-bold">الحالة</th>
+                                    <th class="p-4 font-bold text-center">الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="specialists-table-body" class="divide-y divide-outline-variant/30">
+                                <tr><td colspan="6" class="p-8 text-center text-secondary">جاري تحميل البيانات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="admin-organizations-section" class="hidden">
+                    <div class="p-6 border-b border-outline-variant/50 flex justify-between items-center bg-surface/50">
+                        <h3 class="text-lg font-bold text-primary">سجل المؤسسات والجهات</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-sm">
+                            <thead class="bg-surface-container-high text-secondary">
+                                <tr>
+                                    <th class="p-4 font-bold">اسم المؤسسة</th>
+                                    <th class="p-4 font-bold">السجل التجاري</th>
+                                    <th class="p-4 font-bold w-1/3">الوصف والنشاط</th>
+                                    <th class="p-4 font-bold">تاريخ التسجيل</th>
+                                    <th class="p-4 font-bold">الحالة</th>
+                                    <th class="p-4 font-bold text-center">الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orgs-table-body" class="divide-y divide-outline-variant/30">
+                                <tr><td colspan="6" class="p-8 text-center text-secondary">جاري تحميل البيانات...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="success-modal" class="hidden-view fixed inset-0 z-50 items-center justify-center bg-black/40 backdrop-blur-sm transition-opacity">
+        <div class="bg-surface p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center mx-4 transform transition-all">
+            <div class="w-20 h-20 bg-primary-fixed text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <span class="material-symbols-outlined text-5xl">task_alt</span>
+            </div>
+            <h3 class="text-2xl font-bold text-on-surface mb-3" id="success-title">تم التسجيل بنجاح!</h3>
+            <p class="text-secondary mb-8 text-sm leading-relaxed" id="success-desc">تم التحقق وتسجيل الحساب بنجاح.</p>
+            <button type="button" onclick="goToUserDashboard()" class="w-full py-3.5 bg-primary text-white rounded-xl font-bold hover:bg-[#006d44] transition-colors shadow-md">
+                الدخول إلى حسابي
+            </button>
+        </div>
+    </div>
+
+    <!-- Required container for Firebase Recaptcha -->
+    <div id="recaptcha-container"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, RecaptchaVerifier, signInWithPhoneNumber } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, serverTimestamp, collection, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Custom Toast function (Replaces alert)
+        window.showToast = function(message, isError = false) {
+            const toast = document.getElementById('custom-toast');
+            const toastMsg = document.getElementById('toast-msg');
+            const toastIcon = document.getElementById('toast-icon');
+            
+            toastMsg.innerText = message;
+            toast.className = `fixed top-6 left-1/2 transform -translate-x-1/2 z-[9999] shadow-2xl rounded-xl p-4 flex items-center gap-3 w-11/12 max-w-md show border-l-4 ${isError ? 'bg-red-50 border-red-500' : 'bg-surface border-primary'}`;
+            toastIcon.innerText = isError ? 'error' : 'check_circle';
+            toastIcon.className = `material-symbols-outlined text-2xl ${isError ? 'text-red-500' : 'text-primary'}`;
+            
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
+        };
+        window.hideToast = function() { document.getElementById('custom-toast').classList.remove('show'); };
+
+        // Firebase Config
+        const firebaseConfig = {
+          apiKey: "AIzaSyAtnPXcLjEjT1yw0mpO2qw_6_pYHQsUZeA",
+          authDomain: "baeeyen-c7107.firebaseapp.com",
+          projectId: "baeeyen-c7107",
+          storageBucket: "baeeyen-c7107.firebasestorage.app",
+          messagingSenderId: "289802927952",
+          appId: "1:289802927952:web:deda8750a6bb6d4ce7b655"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try { await signInWithCustomToken(auth, __initial_auth_token); } 
+                    catch (e) { await signInAnonymously(auth); }
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) { console.error("Auth init error:", error); }
+        };
+        initAuth();
+
+        let specialistData = {};
+
+        // Navigation logic
+        window.navigate = function(targetViewId) {
+            const views = ['view-home', 'view-step1', 'view-step2', 'view-otp', 'view-org-step1', 'view-admin', 'view-user-dashboard'];
+            views.forEach(viewId => {
+                const el = document.getElementById(viewId);
+                if (el) {
+                    if (viewId === targetViewId) {
+                        el.classList.remove('hidden-view');
+                        if (viewId === 'view-admin' || viewId === 'view-user-dashboard') {
+                            el.classList.add('flex');
+                            if(viewId === 'view-admin') loadAdminData();
+                        } else {
+                            el.classList.add(viewId === 'view-home' ? 'flex' : (viewId.includes('step') || viewId === 'view-otp' ? 'flex' : 'block'));
+                        }
+                    } else {
+                        el.classList.add('hidden-view');
+                        el.classList.remove('flex', 'block');
+                    }
+                }
+            });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.closeModal = function(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('hidden-view');
+            modal.classList.remove('flex');
+        }
+
+        // Dashboard Tabs logic
+        window.switchUserTab = function(tab) {
+            const tabs = ['home', 'cv', 'orgs', 'profile'];
+            tabs.forEach(t => {
+                document.getElementById('ucontent-' + t).classList.add('hidden');
+                document.getElementById('ucontent-' + t).classList.remove('block');
+                
+                const btn = document.getElementById('utab-' + t);
+                btn.className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all";
+            });
+            
+            document.getElementById('ucontent-' + tab).classList.remove('hidden');
+            document.getElementById('ucontent-' + tab).classList.add('block');
+            document.getElementById('utab-' + tab).className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl bg-white/20 font-bold transition-all";
+        }
+
+        window.goToUserDashboard = function() {
+            closeModal('success-modal');
+            navigate('view-user-dashboard');
+            switchUserTab('home');
+
+            // Auto-fill CV
+            if (document.getElementById('cv_name')) {
+                document.getElementById('cv_name').value = specialistData.fullName || '';
+                document.getElementById('cv_id').value = specialistData.nationalId || '';
+                document.getElementById('cv_email').value = specialistData.email || '';
+                document.getElementById('cv_phone').value = specialistData.phone || '';
+                document.getElementById('cv_license').value = specialistData.license || '';
+            }
+        };
+
+        document.getElementById("form-step1")?.addEventListener("submit", function(e) {
+            e.preventDefault(); 
+            specialistData.fullName = document.getElementById("full_name").value;
+            specialistData.nationalId = document.getElementById("national_id").value;
+            specialistData.email = document.getElementById("email").value;
+            specialistData.phone = document.getElementById("phone").value;
+            specialistData.bio = document.getElementById("bio").value;
+            window.navigate('view-step2');
+        });
+
+        document.getElementById("form-step2")?.addEventListener("submit", async function(e) {
+            e.preventDefault(); 
+            const license = document.getElementById("license").value;
+            const issuer = document.getElementById("issuer").value;
+            const fileInput = document.getElementById("file_upload");
+
+            if(license && issuer && fileInput.files.length > 0) {
+                specialistData.license = license;
+                specialistData.issuer = issuer;
+                
+                const submitBtn = document.getElementById('submit-step2-btn');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'جاري التجهيز...';
+                submitBtn.disabled = true;
+
+                // --- وضع الاختبار المؤقت (بدون رسائل SMS حقيقية) ---
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                    window.navigate('view-otp');
+                    showToast("تم إرسال رمز تجريبي: 123456");
+                }, 1000); // محاكاة تحميل بسيط
+            }
+        });
+
+        document.getElementById("form-otp")?.addEventListener("submit", async function(e) {
+            e.preventDefault(); 
+            const otpInputs = document.querySelectorAll('.otp-input');
+            let code = '';
+            otpInputs.forEach(input => code += input.value);
+
+            if (code.length === 6) {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'جاري التحقق والحفظ...';
+                submitBtn.disabled = true;
+
+                try {
+                    // --- تحقق وهمي للاختبار ---
+                    if (code !== '123456') {
+                        throw new Error("الرمز غير صحيح، يرجى استخدام 123456");
+                    }
+                    
+                    // استخدام حساب مجهول للتجربة بدلاً من توثيق رقم الهاتف الفعلي
+                    const user = auth.currentUser;
+                    
+                    let fileName = "بدون مرفق";
+                    const fileInput = document.getElementById("file_upload");
+                    if(fileInput && fileInput.files.length > 0) fileName = fileInput.files[0].name;
+
+                    const dataToSave = {
+                        accountType: 'specialist',
+                        ...specialistData,
+                        fileName: fileName,
+                        createdAt: serverTimestamp(),
+                        status: 'pending'
+                    };
+
+                    if(user) {
+                        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'data'), dataToSave);
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'specialists', user.uid), dataToSave);
+                    }
+
+                    const modal = document.getElementById('success-modal');
+                    document.getElementById('success-title').innerText = 'تم التسجيل بنجاح!';
+                    document.getElementById('success-desc').innerText = 'تم التحقق من حسابك وتسجيله بنجاح (وضع الاختبار).';
+                    modal.classList.remove('hidden-view');
+                    modal.classList.add('flex');
+
+                } catch (error) {
+                    showToast("الرمز غير صحيح. الرمز التجريبي هو 123456", true);
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            } else {
+                showToast("يرجى إدخال الرمز المكون من 6 أرقام بالكامل.", true);
+            }
+        });
+
+        // Org Logic
+        document.getElementById("form-org-step1")?.addEventListener("submit", async function(e) {
+            e.preventDefault(); 
+            const orgName = document.getElementById("org_name").value;
+            const crNumber = document.getElementById("cr_number").value;
+            const orgDesc = document.getElementById("org_desc").value;
+            const fileInput = document.getElementById("org_file_upload");
+
+            if(orgName && crNumber && fileInput.files.length > 0) {
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = 'جاري الحفظ...';
+                submitBtn.disabled = true;
+
+                try {
+                    const user = auth.currentUser;
+                    let fileName = "بدون مرفق";
+                    if(fileInput.files.length > 0) fileName = fileInput.files[0].name;
+
+                    const orgData = { accountType: 'organization', orgName, crNumber, orgDesc, fileName, createdAt: serverTimestamp(), status: 'pending' };
+
+                    if(user) {
+                        await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'orgData'), orgData);
+                        await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'organizations', user.uid), orgData);
+                    }
+
+                    const modal = document.getElementById('success-modal');
+                    document.getElementById('success-title').innerText = 'تم تسجيل المؤسسة بنجاح!';
+                    document.getElementById('success-desc').innerText = 'تم استلام بيانات المؤسسة بنجاح.';
+                    modal.classList.remove('hidden-view');
+                    modal.classList.add('flex');
+                } catch (error) {
+                    showToast("حدث خطأ أثناء حفظ البيانات.", true);
+                } finally {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                }
+            }
+        });
+
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+                if (e.target.value.length > 1) e.target.value = e.target.value.slice(0, 1);
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) otpInputs[index - 1].focus();
+            });
+        });
+        
+        const updateFileUI = (id, labelId) => {
+            document.getElementById(id)?.addEventListener('change', function() {
+                if(this.files && this.files[0]) {
+                    document.getElementById(labelId).innerHTML = `<span class="text-sm font-bold text-primary block mb-1">تم اختيار الملف:</span><span class="text-xs text-secondary truncate inline-block" dir="ltr">${this.files[0].name}</span>`;
+                    this.parentElement.classList.add('border-primary', 'bg-surface-container-low');
+                }
+            });
+        };
+        updateFileUI('file_upload', 'upload_label');
+        updateFileUI('org_file_upload', 'org_upload_label');
+
+        // Multiple Certificates File UI Update
+        document.getElementById('certs_upload')?.addEventListener('change', function() {
+            const container = document.getElementById('certs_upload_label');
+            container.innerHTML = '';
+            if(this.files && this.files.length > 0) {
+                Array.from(this.files).forEach(file => {
+                    container.innerHTML += `<span class="bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">description</span> ${file.name}</span>`;
+                });
+            }
+        });
+
+        // تشغيل نظام عرض الصورة الشخصية فور اختيارها
+        document.getElementById('profile_pic_upload')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('profile_pic_preview');
+                    const icon = document.getElementById('profile_pic_icon');
+                    
+                    // وضع الصورة وعرضها
+                    preview.src = event.target.result;
+                    preview.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                    
+                    // تعديل إطار الصورة ليدل على النجاح
+                    const container = document.getElementById('profile_pic_container');
+                    container.classList.remove('border-dashed', 'border-outline-variant');
+                    container.classList.add('border-solid', 'border-primary', 'shadow-md');
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // AI Logic Active Implementation
+        const apiKey = ""; // يتم حقن المفتاح تلقائياً في بيئة العمل
+
+        async function fetchGemini(prompt, instruction) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: instruction }] }
+            };
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                return data.candidates?.[0]?.content?.parts?.[0]?.text || null;
+            } catch (e) {
+                console.error("Gemini API Error:", e);
+                return null;
+            }
+        }
+
+        // 1. تحسين نبذة الأفراد (السيرة الذاتية)
+        document.getElementById('enhance-bio-btn')?.addEventListener('click', async () => {
+            const bio = document.getElementById('bio');
+            if(!bio.value.trim()) return showToast('يرجى كتابة خبراتك أولاً!', true);
+            
+            const btn = document.getElementById('enhance-bio-btn');
+            const originalText = btn.innerHTML; 
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> جاري الصياغة...'; 
+            btn.disabled = true;
+            
+            const instruction = "أنت خبير موارد بشرية محترف. قم بإعادة صياغة النبذة المهنية التالية لتكون جذابة، احترافية، وخالية من الأخطاء، مع التركيز على إبراز القيمة المضافة والكفاءة، في فقرة واحدة قصيرة.";
+            const res = await fetchGemini(`النص الأصلي: "${bio.value}"`, instruction);
+            
+            if(res) { 
+                bio.value = res.trim(); 
+                bio.classList.add('ring-2', 'ring-primary', 'bg-primary/5'); 
+                setTimeout(() => bio.classList.remove('ring-2', 'ring-primary', 'bg-primary/5'), 2000);
+                showToast('تمت الصياغة بنجاح!');
+            } else {
+                showToast('حدث خطأ أثناء الاتصال بالمساعد الذكي.', true);
+            }
+            btn.innerHTML = originalText; 
+            btn.disabled = false;
+        });
+
+        // 2. تحسين وصف المنشأة
+        document.getElementById('enhance-org-btn')?.addEventListener('click', async () => {
+            const org = document.getElementById('org_desc');
+            if(!org.value.trim()) return showToast('يرجى كتابة نشاط المؤسسة أولاً!', true);
+            
+            const btn = document.getElementById('enhance-org-btn');
+            const originalText = btn.innerHTML; 
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> جاري الكتابة...'; 
+            btn.disabled = true;
+            
+            const instruction = "أنت خبير تسويق وعلاقات عامة. قم بكتابة وصف ترويجي جذاب واحترافي للمنشأة بناءً على الكلمات المفتاحية المعطاة. اجعله بأسلوب مؤسسي رصين وفي فقرة واحدة مركزة.";
+            const res = await fetchGemini(`الكلمات المفتاحية: "${org.value}"`, instruction);
+            
+            if(res) { 
+                org.value = res.trim(); 
+                org.classList.add('ring-2', 'ring-primary', 'bg-primary/5'); 
+                setTimeout(() => org.classList.remove('ring-2', 'ring-primary', 'bg-primary/5'), 2000);
+                showToast('تم إنشاء الوصف بنجاح!');
+            } else {
+                showToast('حدث خطأ أثناء الاتصال بالمساعد الذكي.', true);
+            }
+            btn.innerHTML = originalText; 
+            btn.disabled = false;
+        });
+
+        // 3. اقتراح مبادرات للمنشأة
+        document.getElementById('suggest-initiatives-btn')?.addEventListener('click', async () => {
+            const orgDesc = document.getElementById('org_desc').value;
+            const container = document.getElementById('initiatives-container');
+            const content = document.getElementById('initiatives-content');
+            const btn = document.getElementById('suggest-initiatives-btn');
+            
+            const originalText = btn.innerHTML; 
+            btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-sm">sync</span> جاري التفكير...'; 
+            btn.disabled = true;
+            
+            const instruction = "أنت مستشار استراتيجي. اقترح 3 مبادرات أو أفكار ابتكارية قابلة للتنفيذ يمكن للمؤسسة إطلاقها بناءً على مجال عملها لتطوير أعمالها وخدمة المجتمع. اكتبها بشكل نقاط واضحة ومختصرة جداً مع رموز تعبيرية.";
+            const prompt = orgDesc ? `مجال عمل المؤسسة: "${orgDesc}"` : "اقترح 3 مبادرات عامة وناجحة لأي منشأة لتعزيز التنمية المستدامة والمشاركة المجتمعية.";
+            
+            const res = await fetchGemini(prompt, instruction);
+            
+            if(res) { 
+                content.innerText = res.trim();
+                container.classList.remove('hidden');
+                showToast('تم توليد المبادرات بنجاح!');
+            } else {
+                showToast('حدث خطأ أثناء الاتصال بالمساعد الذكي.', true);
+            }
+            btn.innerHTML = originalText; 
+            btn.disabled = false;
+        });
+
+        // 4. تقرير الذكاء الاصطناعي في لوحة الإدارة
+        document.getElementById('generate-ai-report-btn')?.addEventListener('click', async () => {
+            const container = document.getElementById('ai-report-container');
+            const content = document.getElementById('ai-report-content');
+            const statSpec = document.getElementById('stat-specialists').innerText;
+            const statOrg = document.getElementById('stat-orgs').innerText;
+            const statPending = document.getElementById('stat-pending').innerText;
+            
+            container.classList.remove('hidden');
+            content.innerHTML = '<span class="flex items-center gap-2"><span class="material-symbols-outlined animate-spin">sync</span> جاري تحليل البيانات وبناء الرؤية...</span>';
+            
+            const instruction = "أنت محلل بيانات استراتيجي. قم بقراءة الإحصائيات الحالية للمنصة واكتب ملخصاً إدارياً قصيراً ومحفزاً (لا يتجاوز 3 أسطر) يحلل الوضع الحالي ويعطي توصية واحدة للنمو.";
+            const prompt = `إحصائيات المنصة الحالية: عدد الأخصائيين المسجلين: ${statSpec}، عدد المؤسسات: ${statOrg}، الطلبات المعلقة: ${statPending}.`;
+            
+            const res = await fetchGemini(prompt, instruction);
+            
+            if(res) { 
+                content.innerText = res.trim();
+            } else {
+                content.innerText = "تعذر جلب التحليل في الوقت الحالي. يرجى المحاولة لاحقاً.";
+            }
+        });
+
+        // Admin dashboard functionality
+        window.switchAdminTab = function(tab) {
+            const sSec = document.getElementById('admin-specialists-section'), oSec = document.getElementById('admin-organizations-section');
+            const bSpec = document.getElementById('tab-btn-specialists'), bOrgs = document.getElementById('tab-btn-organizations');
+            if(tab === 'specialists') {
+                sSec.classList.remove('hidden'); oSec.classList.add('hidden');
+                bSpec.className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl bg-white/20 font-bold transition-all";
+                bOrgs.className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all";
+            } else {
+                oSec.classList.remove('hidden'); sSec.classList.add('hidden');
+                bOrgs.className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl bg-white/20 font-bold transition-all";
+                bSpec.className = "flex items-center gap-3 w-full text-right px-4 py-3 rounded-xl text-white/70 hover:text-white hover:bg-white/10 font-bold transition-all";
+            }
+        };
+
+        window.loadAdminData = async function() {
+            if (!auth.currentUser) return;
+            const sTbody = document.getElementById('specialists-table-body'), oTbody = document.getElementById('orgs-table-body');
+            sTbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-secondary">جاري التحميل...</td></tr>';
+            try {
+                const sSnap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'specialists'));
+                let sHtml = '', pCount = 0;
+                document.getElementById('stat-specialists').innerText = sSnap.size;
+                sSnap.forEach(doc => {
+                    const d = doc.data();
+                    if(d.status==='pending') pCount++;
+                    sHtml += `<tr class="hover:bg-surface-container-low transition-colors"><td class="p-4 font-bold text-on-surface">${d.fullName||'-'}</td><td class="p-4 font-mono text-xs">${d.nationalId||'-'}</td><td class="p-4 text-xs">${d.phone||'-'}</td><td class="p-4 font-bold">${d.license||'-'}</td><td class="p-4">${d.status==='approved'?'معتمد':'قيد المراجعة'}</td><td class="p-4 text-center">${d.status!=='approved'?`<button onclick="approveRecord('specialists', '${doc.id}')" class="bg-primary text-white px-3 py-1 rounded hover:bg-[#006d44]">اعتماد</button>`:'-'}</td></tr>`;
+                });
+                sTbody.innerHTML = sHtml || '<tr><td colspan="6" class="p-8 text-center">لا يوجد بيانات</td></tr>';
+                document.getElementById('stat-pending').innerText = pCount;
+            } catch(e) { console.error(e); }
+        };
+
+        window.approveRecord = async function(col, id) {
+            try { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', col, id), {status: 'approved'}); 
+                showToast('تم اعتماد الطلب بنجاح');
+                loadAdminData(); 
+            } catch(e) { showToast("حدث خطأ أثناء الاعتماد", true); }
+        };
+
+        // دالة تقديم السيرة الذاتية للمنشآت
+        window.submitApplication = function(orgName, btnElement) {
+            // إخفاء رسالة "لا توجد طلبات"
+            const emptyState = document.getElementById('empty-applications');
+            if(emptyState) {
+                emptyState.style.display = 'none';
+                emptyState.classList.remove('flex');
+            }
+            
+            // إظهار قائمة الطلبات
+            const listContainer = document.getElementById('applications-list');
+            if(listContainer) {
+                listContainer.classList.remove('hidden');
+                
+                // إضافة الطلب الجديد في أعلى القائمة
+                const newAppHTML = `
+                    <div class="flex items-center justify-between py-3 border-b border-outline-variant/30 last:border-0 fade-up">
+                        <span class="font-bold text-on-surface text-sm">${orgName}</span>
+                        <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold">قيد المراجعة</span>
+                    </div>
+                `;
+                listContainer.insertAdjacentHTML('afterbegin', newAppHTML);
+            }
+
+            // إظهار التنبيه
+            showToast('تم إرسال سيرتك الذاتية بنجاح إلى: ' + orgName);
+
+            // تغيير حالة الزر لكي لا يضغط عليه مرة أخرى
+            btnElement.innerHTML = 'تم التقديم <span class="material-symbols-outlined text-sm inline-block align-middle ml-1">check_circle</span>';
+            btnElement.disabled = true;
+            btnElement.classList.add('opacity-50', 'cursor-not-allowed');
+            btnElement.classList.remove('hover:bg-[#7ce2a8]', 'hover:bg-primary', 'hover:text-white');
+        };
+    </script>
+</body>
+</html>
